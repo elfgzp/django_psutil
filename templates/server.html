@@ -1,0 +1,572 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+        <!-- ECharts -->
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/shine.js"></script>
+
+<div id="content" class="colM row-fluid">
+  <table  class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>内存使用率 CPU使用率 网络上传和下载 磁盘读取和写入</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td id="cpu_memory_disk_network_echarts" style="height:300px;"></td>
+            <script>
+    var  server_info ;
+    var element = document.getElementById('cpu_memory_disk_network_echarts');
+    var element_width = element.offsetWidth
+    var cpu_memory_disk_network_echarts = echarts.init(element, 'shine')
+    cpu_memory_disk_network_echarts_option = {
+        tooltip : {
+            formatter: "{a} <br/>{c} {b}"
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        series : [
+            {
+                name: 'CPU使用率',
+                type: 'gauge',
+                z: 3,
+                min: 0,
+                max: 100,
+                splitNumber: 10,
+                center: ['50%', '55%'],    // 默认全局居中
+                radius: '150px',
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        width: 10
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length: 15,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length: 20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                title : {
+                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                        fontWeight: 'bolder',
+                        fontSize: 20,
+                        fontStyle: 'italic'
+                    }
+                },
+                detail : {
+                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                        fontWeight: 'bolder'
+                    }
+                },
+                data:[{value: 0, name: 'CPU％'}]
+            },
+            {
+                name: '内存使用率',
+                type: 'gauge',
+                center: [(element_width*0.5-220).toString(), '60%'],    // 默认全局居中
+                radius: '105px',
+                min:0,
+                max:100,
+                endAngle:45,
+                splitNumber:10,
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    width:5
+                },
+                title: {
+                    offsetCenter: [0, '-30%'],       // x, y，单位px
+                },
+                detail: {
+                    textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                        fontWeight: 'bolder'
+                    }
+                },
+                data:[{value: 0, name: 'Memory %'}]
+            },
+            {
+                name: '网络状况(上传与下行)',
+                type: 'gauge',
+                center: [(element_width*0.5+180).toString(), '60%'],    // 默认全局居中
+                radius: '75px',
+                min: 0,
+                max: 50,
+                startAngle: 135,
+                endAngle: 1,
+                splitNumber: 5,
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    width:2
+                },
+                title : {
+                    show: false
+                },
+                detail : {
+                    show: false
+                },
+                data:[{value: 0, name: 'NetWork MB'}]
+            },
+            {
+                name: '硬盘读写(读取与写入)',
+                type: 'gauge',
+                center : [(element_width*0.5+180).toString(), '60%'],    // 默认全局居中
+                radius : '75px',
+                min: 0,
+                max: 200,
+                startAngle: -3,
+                endAngle: -135,
+                splitNumber: 4,
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    width:2
+                },
+                title: {
+                    show: false
+                },
+                detail: {
+                    show: false
+                },
+                data:[{value: 0, name: 'Disk MB'}]
+            }
+        ]
+    };
+    cpu_memory_disk_network_echarts.setOption(cpu_memory_disk_network_echarts_option, true);
+    timeTicket = setInterval(function () {
+        $.ajax({
+            type:'GET',
+            url:'/admin/server-info-api',
+            dataType:'json',
+            success:function(json)
+                {
+                     server_info = eval(json);
+                }
+        });
+        cpu_memory_disk_network_echarts_option.series[0].data[0].value = (server_info.cpu).toFixed(2) - 0;
+        cpu_memory_disk_network_echarts_option.series[1].data[0].value = (server_info.memory).toFixed(2) - 0;
+        cpu_memory_disk_network_echarts_option.series[2].data[0].value = (server_info.network).toFixed(2) - 0;
+        cpu_memory_disk_network_echarts_option.series[3].data[0].value = (server_info.disk).toFixed(2) - 0;
+        cpu_memory_disk_network_echarts.setOption(cpu_memory_disk_network_echarts_option, true);
+    }, 1000);
+    </script>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="content" class="colM row-fluid">
+  <table  class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>内存监控</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td id="memory_echarts" style="height: 300px"></td>
+        <script>
+            var memory_echarts = echarts.init(document.getElementById('memory_echarts'), 'shine')
+            var memory_date = [];
+            var memory_data = [];
+
+            memory_echarts_option = {
+                toolbox: {
+                    show: true,
+                    feature: {
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: {
+                    name: '时间',
+                    type: 'category',
+                    boundaryGap: false,
+                    data: memory_date,
+                },
+                yAxis: {
+                    name: '内存使用率%',
+                    type: 'value',
+                    scale: true,
+                    precision: 2,
+                    splitNumber: 9,
+                    boundaryGap: [0.01, 0.01],
+                    splitArea: { show: true }
+                },
+                series: [
+                    {
+                        name:'内存使用率%',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: memory_data
+                    }
+                ],
+                color:['#2b821d'],
+
+            };
+            memory_echarts.setOption(memory_echarts_option, true);
+            timeTicket = setInterval(function () {
+                memory_date.push(new Date().toLocaleTimeString() );
+                memory_data.push(server_info.memory);
+                memory_echarts.setOption({
+                    xAxis: {
+                        data: memory_date
+                    },
+                    series: [{
+                        name:'',
+                        data: memory_data
+                    }]
+                });
+            }, 1000);
+        </script>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="content" class="colM row-fluid">
+  <table  class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>CPU监控</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td id="cpu_echarts" style="height: 300px"></td>
+        <script>
+            var cpu_echarts = echarts.init(document.getElementById('cpu_echarts'), 'shine')
+            var cpu_date = [];
+            var cpu_data = [];
+
+            cpu_echarts_option = {
+                toolbox: {
+                    show: true,
+                    feature: {
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: {
+                    name: '时间',
+                    type: 'category',
+                    boundaryGap: false,
+                    data: cpu_date,
+                },
+                yAxis: {
+                    name: 'CPU使用率%',
+                    type: 'value',
+                    scale: true,
+                    precision: 2,
+                    splitNumber: 9,
+                    boundaryGap: [0.01, 0.01],
+                    splitArea: { show: true }
+                },
+                series: [
+                    {
+                        name:'CPU使用率%',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: cpu_data
+                    }
+                ],
+                color:['#005eaa'],
+
+            };
+            cpu_echarts.setOption(cpu_echarts_option, true);
+            timeTicket = setInterval(function () {
+                cpu_date.push(new Date().toLocaleTimeString() );
+                cpu_data.push(server_info.cpu);
+                cpu_echarts.setOption({
+                    xAxis: {
+                        data: cpu_date
+                    },
+                    series: [{
+                        name:'',
+                        data: cpu_data
+                    }]
+                });
+            }, 1000);
+        </script>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="content" class="colM row-fluid">
+  <table  class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>网络监控</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td id="network_echarts" style="height: 300px"></td>
+         <script>
+            var network_echarts = echarts.init(document.getElementById('network_echarts'), 'shine')
+            var network_date = [];
+            var network_recv = [];
+            var network_sent = [];
+
+            network_echarts_option = {
+                legend: {
+                    data:[
+                        {
+                            name:'网络上传MB',
+                        },
+                        {
+                            name:'网络下载MB',
+                        },
+                    ],
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: {
+                    name: '时间',
+                    type: 'category',
+                    boundaryGap: false,
+                    data: network_date,
+                },
+                yAxis: {
+                    name: '网络总上传和下载 MB',
+                    type: 'value',
+                    scale: true,
+                    splitNumber: 9,
+                    boundaryGap: false,
+                    splitArea: { show: true }
+                },
+                series: [
+                    {
+                        name:'网络下载MB',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: network_sent
+                    },
+                    {
+                        name:'网络上传MB',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: network_recv
+                    },
+
+                ],
+                color:['#2b821d', '#005eaa'],
+
+            };
+            network_echarts.setOption(network_echarts_option, true);
+            timeTicket = setInterval(function () {
+                network_date.push(new Date().toLocaleTimeString() );
+                network_recv.push(server_info.network_recv);
+                network_sent.push(server_info.network_sent);
+                network_echarts.setOption({
+                    xAxis: {
+                        data: network_date
+                    },
+                    series: [
+                        {
+                        data: network_sent
+                    },
+                        {
+                        data: network_recv
+                    },
+
+                    ]
+                });
+            }, 1000);
+        </script>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="content" class="colM row-fluid">
+  <table  class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>磁盘监控</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td id="disk_echarts" style="height: 300px"></td>
+                 <script>
+            var disk_echarts = echarts.init(document.getElementById('disk_echarts'), 'shine')
+            var disk_date = [];
+            var disk_write = [];
+            var disk_read = [];
+
+            disk_echarts_option = {
+                legend: {
+                    data:[
+                        {
+                            name:'磁盘读取MB',
+                        },
+                        {
+                            name:'磁盘写入MB',
+                        },
+                    ],
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: {
+                    name: '时间',
+                    type: 'category',
+                    boundaryGap: false,
+                    data: disk_date,
+                },
+                yAxis: {
+                    name: '磁盘总读取和写入 MB',
+                    type: 'value',
+                    scale: true,
+                    splitNumber: 9,
+                    boundaryGap: false,
+                    splitArea: { show: true }
+                },
+                series: [
+                    {
+                        name:'磁盘读取MB',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: disk_read
+                    },
+                    {
+                        name:'磁盘写入MB',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'none',
+                        stack: 'a',
+                        areaStyle: {
+                            normal: {}
+                        },
+                        data: disk_write
+                    },
+
+                ],
+                color:['#2b821d', '#005eaa'],
+
+            };
+            disk_echarts.setOption(disk_echarts_option, true);
+            timeTicket = setInterval(function () {
+                disk_date.push(new Date().toLocaleTimeString() );
+                disk_write.push(server_info.disk_write);
+                disk_read.push(server_info.disk_read);
+                disk_echarts.setOption({
+                    xAxis: {
+                        data: disk_date
+                    },
+                    series: [
+                        {
+                        data: disk_read
+                    },
+                        {
+                        data: disk_write
+                    },
+
+                    ]
+                });
+            }, 1000);
+        </script>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+{% endblock %}
+
