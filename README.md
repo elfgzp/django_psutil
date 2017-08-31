@@ -1,0 +1,2 @@
+# django_psutil
+利用psutil+echart和django的后台对服务器进行简单的监控
